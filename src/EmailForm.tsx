@@ -50,7 +50,7 @@ export default function EmailForm() {
         const formData = new FormData();
         formData.append("content", text);
 
-        response = await fetch(API_URL, {
+        response = await fetch(API_URL + "/classificar-email", {
           method: "POST",
           body: formData,
         });
