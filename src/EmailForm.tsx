@@ -41,7 +41,8 @@ export default function EmailForm() {
     setError("");
     setResultado(null);
 
-    const API_URL = "https://email-classifier-backend-4ccb.onrender.com";
+    const API_URL =
+      "https://email-classifier-backend-4ccb.onrender.com/classificar-email";
 
     try {
       let response: Response;
@@ -50,7 +51,7 @@ export default function EmailForm() {
         const formData = new FormData();
         formData.append("content", text);
 
-        response = await fetch(API_URL + "/classificar-email", {
+        response = await fetch(API_URL, {
           method: "POST",
           body: formData,
         });
