@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import "./index.css";
+
+type CategoriaLower = "produtivo" | "improdutivo";
 
 export type Resultado = {
-  categoria: "produtivo" | "improdutivo";
+  categoria: CategoriaLower;
   resposta_sugerida: string;
 };
+
+const API_URL =
+  "https://email-classifier-backend-4ccb.onrender.com/classificar-email";
 
 export default function EmailForm() {
   const [inputType, setInputType] = useState<"text" | "file">("text");
@@ -14,6 +20,13 @@ export default function EmailForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
+  // Limpa mensagem de erro automaticamente após 5s (sem side-effect no render)
+  useEffect(() => {
+    if (!error) return;
+    const t = setTimeout(() => setError(""), 5000);
+    return () => clearTimeout(t);
+  }, [error]);
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
     if (
@@ -22,69 +35,69 @@ export default function EmailForm() {
         selectedFile.type === "text/plain")
     ) {
       setFile(selectedFile);
+      setError("");
     } else {
       setFile(null);
+      setError("Formato inválido. Selecione um PDF ou TXT.");
     }
   };
 
-  const isFormValid = (): boolean => {
-    if (inputType === "file" && !file) return false;
-    if (inputType === "text" && !text.trim()) return false;
-    return true;
+  const isFormValid = useMemo(() => {
+    if (inputType === "file") return !!file;
+    return !!text.trim();
+  }, [inputType, file, text]);
+
+  const normalizeCategoria = (raw: unknown): CategoriaLower => {
+    const lower = String(raw || "").toLowerCase();
+    return lower === "produtivo" ? "produtivo" : "improdutivo";
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isFormValid()) return;
+    if (!isFormValid) return;
 
     setLoading(true);
     setError("");
     setResultado(null);
 
-    const API_URL =
-      "https://email-classifier-backend-4ccb.onrender.com/classificar-email";
-
     try {
-      let response: Response;
-
+      const formData = new FormData();
       if (inputType === "text") {
-        const formData = new FormData();
         formData.append("content", text);
-
-        response = await fetch(API_URL, {
-          method: "POST",
-          body: formData,
-        });
       } else if (inputType === "file" && file) {
-        const formData = new FormData();
         formData.append("file", file);
-        response = await fetch(API_URL, {
-          method: "POST",
-          body: formData,
-        });
       } else {
         throw new Error("Dados inválidos");
       }
 
-      if (!response.ok)
-        throw new Error(`Erro do servidor: ${response.statusText}`);
+      const response = await fetch(API_URL, { method: "POST", body: formData });
 
-      const data: Resultado = await response.json();
-      setResultado(data);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Erro ao se comunicar com o backend");
+      if (!response.ok) {
+        const msg = `Erro do servidor: ${response.status} ${response.statusText}`;
+        throw new Error(msg);
       }
+
+      // Pode vir com campos extras do backend; normalizamos só o que usamos
+      const data = await response.json();
+
+      const normalized: Resultado = {
+        categoria: normalizeCategoria(data?.categoria),
+        resposta_sugerida: String(data?.resposta_sugerida || ""),
+      };
+
+      setResultado(normalized);
+    } catch (err: unknown) {
+      setResultado(null);
+      if (err instanceof Error) setError(err.message);
+      else setError("Erro ao se comunicar com o backend");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="form">
+    <div className="container">
+      <form onSubmit={handleSubmit} className="form" noValidate>
         <label htmlFor="tipo">Formato do conteúdo:</label>
         <select
           id="tipo"
@@ -94,7 +107,9 @@ export default function EmailForm() {
             setInputType(value);
             setFile(null);
             setText("");
+            // mantém o último resultado visível até novo envio? você decide:
             setResultado(null);
+            setError("");
           }}
         >
           <option value="text">Texto digitado</option>
@@ -106,9 +121,10 @@ export default function EmailForm() {
             <label htmlFor="texto">Digite o texto:</label>
             <textarea
               id="texto"
-              rows={5}
+              rows={6}
               value={text}
               onChange={(e) => setText(e.target.value)}
+              placeholder="Cole ou digite o conteúdo do e-mail aqui…"
             />
           </>
         )}
@@ -125,33 +141,51 @@ export default function EmailForm() {
           </>
         )}
 
-        <button type="submit" disabled={!isFormValid() || loading}>
+        <button
+          type="submit"
+          disabled={!isFormValid || loading}
+          aria-busy={loading}
+        >
+          {loading && (
+            <span className="spinner-circle" aria-hidden="true"></span>
+          )}
           {loading ? "Enviando..." : "Verificar"}
         </button>
 
-        {error && setTimeout(() => setError(""), 5000) && (
-          <p style={{ color: "red" }}>{error}</p>
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
         )}
       </form>
 
-      <div className="resultado">
+      <div className="resultado" aria-live="polite">
         {loading ? (
-          <p>⏳ Analisando email, aguarde...</p>
+          <p className="loading-text">⏳ Analisando email, aguarde...</p>
         ) : resultado ? (
           <>
             <h3>Resultado da análise</h3>
             <p>
-              <strong>Classificação:</strong> {resultado.categoria}
+              <strong>Classificação:</strong>{" "}
+              <span
+                className={`badge ${
+                  resultado.categoria === "produtivo"
+                    ? "badge-green"
+                    : "badge-red"
+                }`}
+              >
+                {resultado.categoria}
+              </span>
             </p>
             <p>
-              <strong>Sugestão de resposta:</strong>{" "}
-              {resultado.resposta_sugerida}
+              <strong>Sugestão de resposta:</strong>
             </p>
+            <div className="resposta">{resultado.resposta_sugerida}</div>
           </>
         ) : (
           <p>Nenhum email foi enviado ainda.</p>
         )}
       </div>
-    </>
+    </div>
   );
 }

@@ -28,18 +28,25 @@ body {
   margin: 0;
   min-height: 100vh;
   display: flex;
-  flex-direction: column; /* Header em cima, main abaixo */
+  flex-direction: column;
   background-color: #464646;
 }
 
 /* Cabeçalho fixo */
 header {
-  width: 100%;
   text-align: center;
+  height: fit-content;
   color: #fff;
-  position: sticky;
   top: 0;
   z-index: 10;
+  padding: 1em;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8em;
 }
 
 /* Conteúdo principal */
@@ -56,24 +63,36 @@ header {
 /* Container do form + resultado */
 .container {
   display: flex;
-  gap: 2em;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap; /* Responsivo: form e resultado empilham em telas pequenas */
+  flex-wrap: wrap; /* Permite empilhar em telas menores */
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: stretch; /* Faz os cards terem altura igual, melhor alinhamento */
+  gap: 2em; /* Espaço entre cards */
+  max-width: 100%; /* Evita overflow horizontal */
+  padding: 1em;
+  box-sizing: border-box;
 }
 
-/* Formulário */
-.form {
-  display: flex;
-  flex-direction: column;
+/* Card base */
+.form,
+.resultado {
+  flex: 1 1 22em; /* Flexível: cresce e encolhe com min-width de 22em */
+  min-width: 22em; /* Mantém tamanho mínimo */
+  padding: 1.8em;
+  border-radius: 1.2em;
   gap: 1em;
-  width: 20em;
-  box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
-  padding: 1.5em;
-  border-radius: 1em;
   background: #2e2e2e;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column; /* Garante que conteúdo interno fique vertical */
 }
 
+.form:hover,
+.resultado:hover {
+  transform: translateY(-3px);
+}
+
+/* Labels e inputs */
 .form label {
   font-weight: 500;
   margin-bottom: 0.3em;
@@ -85,7 +104,7 @@ header {
 .form textarea {
   padding: 0.7em 1em;
   border: 1px solid #555;
-  border-radius: 0.5em;
+  border-radius: 0.6em;
   background-color: #3a3a3a;
   color: #fff;
   font-size: 1em;
@@ -97,7 +116,7 @@ header {
 .form textarea:focus {
   outline: none;
   border-color: #646cff;
-  box-shadow: 0 0 0 3px rgba(100,108,255,0.3);
+  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.3);
 }
 
 textarea {
@@ -106,21 +125,21 @@ textarea {
 
 /* Botão */
 button {
-  border-radius: 0.5em;
+  border-radius: 0.6em;
   border: none;
-  padding: 0.8em 1.2em;
+  padding: 0.9em 1.3em;
   font-size: 1em;
   font-weight: 600;
-  font-family: inherit;
   background: linear-gradient(135deg, #646cff, #535bf2);
   color: #fff;
   cursor: pointer;
-  transition: transform 0.2s, opacity 0.2s;
+  transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
 }
 
 button:hover:not(:disabled) {
   transform: translateY(-2px);
-  opacity: 0.9;
+  opacity: 0.95;
+  box-shadow: 0px 4px 12px rgba(100, 108, 255, 0.4);
 }
 
 button:disabled {
@@ -129,23 +148,67 @@ button:disabled {
   opacity: 0.6;
 }
 
-/* Caixa de resultado */
-.resultado {
-  flex: 1;
-  width: 20em;
-  padding: 1.5em;
-  border-radius: 1em;
-  background: #2e2e2e;
-  color: #fff;
-  box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+/* Spinner */
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #646cff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
+/* Mensagem de erro */
+.error {
+  color: #b91c1c;
+  background: #fee2e2;
+  padding: 0.7em 1em;
+  border-radius: 0.6em;
+  margin-top: 0.8em;
+  font-size: 0.9em;
+}
+
+/* Resultado */
 .resultado h3 {
   margin-top: 0;
+  margin-bottom: 0.6em;
 }
 
 .resultado p {
   margin: 0.5em 0;
+}
+
+/* Badge de classificação */
+.badge {
+  padding: 0.3em 0.7em;
+  border-radius: 0.5em;
+  font-weight: bold;
+  color: #fff;
+  font-size: 0.9em;
+}
+
+.badge-green {
+  background-color: #16a34a;
+}
+
+.badge-red {
+  background-color: #dc2626;
+}
+
+/* Caixa de resposta sugerida */
+.resposta {
+  background: #3d3d3d;
+  padding: 1em;
+  border-radius: 0.8em;
+  margin-top: 0.6em;
+  font-size: 0.95em;
+  line-height: 1.4;
 }
 
 /* Tema claro */
@@ -157,12 +220,10 @@ button:disabled {
   a:hover {
     color: #747bff;
   }
-  button {
+  .form,
+  .resultado,
+  header {
     background-color: #f9f9f9;
-    color: #213547;
-  }
-  .form, .resultado, header {
-    background-color: #f0f0f0;
     color: #213547;
   }
   .form input,
@@ -172,6 +233,9 @@ button:disabled {
     color: #213547;
     border: 1px solid #ccc;
   }
+  .resposta {
+    background: #f1f1f1;
+  }
 }
 
 /* Responsividade */
@@ -179,5 +243,27 @@ button:disabled {
   .container {
     flex-direction: column;
     align-items: center;
+  }
+}
+
+/* Spinner circular */
+.spinner-circle {
+  border: 4px solid rgba(255, 255, 255, 0.2); /* cor clara do círculo */
+  border-top: 4px solid #646cff; /* cor do topo animado */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5em; /* espaço se estiver no botão */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
