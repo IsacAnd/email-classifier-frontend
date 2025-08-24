@@ -135,7 +135,9 @@ export default function EmailForm() {
       </form>
 
       <div className="resultado">
-        {resultado ? (
+        {loading ? (
+          <p>⏳ Analisando email, aguarde...</p>
+        ) : resultado ? (
           <>
             <h3>Resultado da análise</h3>
             <p>
