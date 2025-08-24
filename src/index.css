@@ -209,6 +209,9 @@ button:disabled {
   margin-top: 0.6em;
   font-size: 0.95em;
   line-height: 1.4;
+
+  /* preserva quebras de linha */
+  white-space: pre-wrap;
 }
 
 /* Tema claro */
