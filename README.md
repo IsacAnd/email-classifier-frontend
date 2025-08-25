@@ -30,11 +30,19 @@ O frontend se comunica com o **backend** (API em Python/FastAPI) para realizar a
 
 1. **Clonar o repositório (se ainda não fez isso)**
 
+```bash
    git clone https://github.com/IsacAnd/email-classifier-frontend
    cd ./email-classifier-frontend
+```
 
 2. **Instalar todas as dependências do projeto**
+
+```bash
    npm install
+```
 
 3. **Rodar o projeto**
+
+```bash
    npm run dev
+```
