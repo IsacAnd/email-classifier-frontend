@@ -34,7 +34,11 @@ O frontend se comunica com o **backend** (API em Python/FastAPI) para realizar a
    cd ./email-classifier-frontend
 
 2. **Instalar todas as dependências do projeto**
+  
    npm install
 
 3. **Rodar o projeto**
+
    npm run dev
+
+
