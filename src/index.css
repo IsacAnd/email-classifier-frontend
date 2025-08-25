@@ -13,7 +13,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Links */
 a {
   font-weight: 500;
   color: #646cff;
@@ -23,7 +22,6 @@ a:hover {
   color: #535bf2;
 }
 
-/* Reset básico do body */
 body {
   margin: 0;
   min-height: 100vh;
@@ -32,7 +30,6 @@ body {
   background-color: #464646;
 }
 
-/* Cabeçalho fixo */
 header {
   text-align: center;
   height: fit-content;
@@ -49,7 +46,6 @@ header h1 {
   font-size: 1.8em;
 }
 
-/* Conteúdo principal */
 .main {
   flex: 1;
   display: flex;
@@ -60,23 +56,21 @@ header h1 {
   box-sizing: border-box;
 }
 
-/* Container do form + resultado */
 .container {
   display: flex;
-  flex-wrap: wrap; /* Permite empilhar em telas menores */
-  justify-content: center; /* Centraliza horizontalmente */
-  align-items: stretch; /* Faz os cards terem altura igual, melhor alinhamento */
-  gap: 2em; /* Espaço entre cards */
-  max-width: 100%; /* Evita overflow horizontal */
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 2em;
+  max-width: 100%;
   padding: 1em;
   box-sizing: border-box;
 }
 
-/* Card base */
 .form,
 .resultado {
-  flex: 1 1 22em; /* Flexível: cresce e encolhe com min-width de 22em */
-  min-width: 22em; /* Mantém tamanho mínimo */
+  flex: 1 1 22em;
+  min-width: 22em;
   padding: 1.8em;
   border-radius: 1.2em;
   gap: 1em;
@@ -84,7 +78,7 @@ header h1 {
   box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.25);
   transition: transform 0.2s;
   display: flex;
-  flex-direction: column; /* Garante que conteúdo interno fique vertical */
+  flex-direction: column;
 }
 
 .form:hover,
@@ -92,7 +86,6 @@ header h1 {
   transform: translateY(-3px);
 }
 
-/* Labels e inputs */
 .form label {
   font-weight: 500;
   margin-bottom: 0.3em;
@@ -123,7 +116,6 @@ textarea {
   resize: vertical;
 }
 
-/* Botão */
 button {
   border-radius: 0.6em;
   border: none;
@@ -148,7 +140,6 @@ button:disabled {
   opacity: 0.6;
 }
 
-/* Spinner */
 .spinner {
   border: 3px solid #f3f3f3;
   border-top: 3px solid #646cff;
@@ -164,7 +155,6 @@ button:disabled {
   }
 }
 
-/* Mensagem de erro */
 .error {
   color: #b91c1c;
   background: #fee2e2;
@@ -174,7 +164,6 @@ button:disabled {
   font-size: 0.9em;
 }
 
-/* Resultado */
 .resultado h3 {
   margin-top: 0;
   margin-bottom: 0.6em;
@@ -184,7 +173,6 @@ button:disabled {
   margin: 0.5em 0;
 }
 
-/* Badge de classificação */
 .badge {
   padding: 0.3em 0.7em;
   border-radius: 0.5em;
@@ -201,7 +189,6 @@ button:disabled {
   background-color: #dc2626;
 }
 
-/* Caixa de resposta sugerida */
 .resposta {
   background: #3d3d3d;
   padding: 1em;
@@ -209,12 +196,9 @@ button:disabled {
   margin-top: 0.6em;
   font-size: 0.95em;
   line-height: 1.4;
-
-  /* preserva quebras de linha */
   white-space: pre-wrap;
 }
 
-/* Tema claro */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -241,7 +225,6 @@ button:disabled {
   }
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
@@ -249,17 +232,16 @@ button:disabled {
   }
 }
 
-/* Spinner circular */
 .spinner-circle {
-  border: 4px solid rgba(255, 255, 255, 0.2); /* cor clara do círculo */
-  border-top: 4px solid #646cff; /* cor do topo animado */
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top: 4px solid #646cff;
   border-radius: 50%;
   width: 24px;
   height: 24px;
   animation: spin 1s linear infinite;
   display: inline-block;
   vertical-align: middle;
-  margin-right: 0.5em; /* espaço se estiver no botão */
+  margin-right: 0.5em;
 }
 
 @keyframes spin {

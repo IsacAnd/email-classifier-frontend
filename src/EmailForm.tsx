@@ -20,7 +20,6 @@ export default function EmailForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  // Limpa mensagem de erro automaticamente após 5s (sem side-effect no render)
   useEffect(() => {
     if (!error) return;
     const t = setTimeout(() => setError(""), 5000);
@@ -83,7 +82,6 @@ export default function EmailForm() {
         );
       }
 
-      // Pode vir com campos extras do backend; normalizamos só o que usamos
       const data = await response.json();
 
       const normalized: Resultado = {
@@ -113,7 +111,6 @@ export default function EmailForm() {
             setInputType(value);
             setFile(null);
             setText("");
-            // mantém o último resultado visível até novo envio? você decide:
             setResultado(null);
             setError("");
           }}
