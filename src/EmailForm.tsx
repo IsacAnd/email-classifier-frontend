@@ -77,6 +77,12 @@ export default function EmailForm() {
         throw new Error(msg);
       }
 
+      if (response.status === 429) {
+        throw new Error(
+          "O servidor está processando muitas requisições. Tente novamente mais tarde."
+        );
+      }
+
       // Pode vir com campos extras do backend; normalizamos só o que usamos
       const data = await response.json();
 
